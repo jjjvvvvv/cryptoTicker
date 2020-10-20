@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'coin_data.dart';
-import 'coin_data.dart';
+import 'package:flutter/cupertino.dart';
 
 class PriceScreen extends StatefulWidget {
   @override
@@ -9,6 +9,32 @@ class PriceScreen extends StatefulWidget {
 
 class _PriceScreenState extends State<PriceScreen> {
   String selectedCurrency = 'USD';
+
+  // This method could be very useful for the product list cards
+  List<DropdownMenuItem> getDropdownItems() {
+    List<DropdownMenuItem<String>> dropdownItems = [];
+    for (String currency in currenciesList) {
+      var newItem = DropdownMenuItem(
+        child: Text(currency),
+        value: currency,
+      );
+      dropdownItems.add(newItem);
+    }
+    return dropdownItems;
+  }
+
+  List<Text> getPickerItems() {
+    List<Text> pickerItems = [];
+    for (String item in currenciesList) {
+      pickerItems.add(
+        Text(
+          item,
+          style: TextStyle(color: Colors.white),
+        ),
+      );
+    }
+    return pickerItems;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,32 +72,25 @@ class _PriceScreenState extends State<PriceScreen> {
             alignment: Alignment.center,
             padding: EdgeInsets.only(bottom: 30.0),
             color: Colors.greenAccent,
-            child: DropdownButton<String>(
-              value: selectedCurrency,
-              items: [
-                for (String currency in currenciesList) {currenc},
-                DropdownMenuItem(
-                  child: Text('USD'),
-                  value: 'USD',
-                ),
-                DropdownMenuItem(
-                  child: Text('EUR'),
-                  value: 'EUR',
-                ),
-                DropdownMenuItem(
-                  child: Text('GBP'),
-                  value: 'GBP',
-                ),
-              ],
-              onChanged: (value) {
-                setState(() {
-                  selectedCurrency = value;
-                });
-              },
-            ),
+            child: CupertinoPicker(
+                itemExtent: 32.0,
+                onSelectedItemChanged: (selectedIndex) {
+                  print(selectedIndex);
+                },
+                children: getPickerItems()),
           ),
         ],
       ),
     );
   }
 }
+
+// DropdownButton<String>(
+// value: selectedCurrency,
+// items: getDropdownItems(),
+// onChanged: (value) {
+// setState(() {
+// selectedCurrency = value;
+// });
+// },
+// ),
