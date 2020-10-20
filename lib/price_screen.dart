@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'coin_data.dart';
 import 'package:flutter/cupertino.dart';
+import 'dart:io' show Platform;
 
 class PriceScreen extends StatefulWidget {
   @override
@@ -10,20 +11,31 @@ class PriceScreen extends StatefulWidget {
 class _PriceScreenState extends State<PriceScreen> {
   String selectedCurrency = 'USD';
 
-  // This method could be very useful for the product list cards
-  List<DropdownMenuItem> getDropdownItems() {
+  DropdownButton<String> androidDropdown() {
+    // This method could be very useful for the product list cards
     List<DropdownMenuItem<String>> dropdownItems = [];
     for (String currency in currenciesList) {
       var newItem = DropdownMenuItem(
-        child: Text(currency),
+        child: Text(
+          currency,
+        ),
         value: currency,
       );
       dropdownItems.add(newItem);
     }
-    return dropdownItems;
+
+    return DropdownButton<String>(
+      value: selectedCurrency,
+      items: dropdownItems,
+      onChanged: (value) {
+        setState(() {
+          selectedCurrency = value;
+        });
+      },
+    );
   }
 
-  List<Text> getPickerItems() {
+  CupertinoPicker iOSPicker() {
     List<Text> pickerItems = [];
     for (String item in currenciesList) {
       pickerItems.add(
@@ -33,7 +45,14 @@ class _PriceScreenState extends State<PriceScreen> {
         ),
       );
     }
-    return pickerItems;
+
+    return CupertinoPicker(
+      itemExtent: 32.0,
+      onSelectedItemChanged: (selectedIndex) {
+        print(selectedIndex);
+      },
+      children: pickerItems,
+    );
   }
 
   @override
@@ -57,6 +76,7 @@ class _PriceScreenState extends State<PriceScreen> {
               child: Padding(
                 padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 28.0),
                 child: Text(
+                  // BitcoinAverage API - Ticker Data (Per Symbol)
                   '1 BTC = ? USD',
                   textAlign: TextAlign.center,
                   style: TextStyle(
@@ -72,25 +92,10 @@ class _PriceScreenState extends State<PriceScreen> {
             alignment: Alignment.center,
             padding: EdgeInsets.only(bottom: 30.0),
             color: Colors.greenAccent,
-            child: CupertinoPicker(
-                itemExtent: 32.0,
-                onSelectedItemChanged: (selectedIndex) {
-                  print(selectedIndex);
-                },
-                children: getPickerItems()),
+            child: Platform.isIOS ? iOSPicker() : androidDropdown(),
           ),
         ],
       ),
     );
   }
 }
-
-// DropdownButton<String>(
-// value: selectedCurrency,
-// items: getDropdownItems(),
-// onChanged: (value) {
-// setState(() {
-// selectedCurrency = value;
-// });
-// },
-// ),
