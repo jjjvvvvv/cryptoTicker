@@ -112,14 +112,63 @@ class _PriceScreenState extends State<PriceScreen> {
               ),
             ),
           ),
-          FloatingActionButton(
-            foregroundColor: Colors.black,
-            onPressed: () async {
-              String pair = coin + selectedCurrency.toUpperCase();
-              var priceData = await crypto.getPrice();
-              updateUI(priceData);
-              print('check price');
-            },
+          Padding(
+            padding: EdgeInsets.fromLTRB(18.0, 18.0, 18.0, 0),
+            child: Card(
+              color: Colors.greenAccent,
+              elevation: 5.0,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+              child: Padding(
+                padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 28.0),
+                child: Text(
+                  // BitcoinAverage API - Ticker Data (Per Symbol)
+                  '1 ETH = $cryptoValue $selectedCurrency',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 20.0,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.fromLTRB(18.0, 18.0, 18.0, 0),
+            child: Card(
+              color: Colors.greenAccent,
+              elevation: 5.0,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+              child: Padding(
+                padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 28.0),
+                child: Text(
+                  // BitcoinAverage API - Ticker Data (Per Symbol)
+                  '1 LTC = $cryptoValue $selectedCurrency',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 20.0,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ),
+          ),
+          Container(
+            alignment: Alignment.bottomRight,
+            padding: EdgeInsets.fromLTRB(0, 18.0, 18.0, 0),
+            child: FloatingActionButton(
+              hoverColor: Colors.white,
+              focusColor: Colors.white,
+              onPressed: () async {
+                String pair = coin + selectedCurrency.toUpperCase();
+                var priceData = await crypto.getPrice(pair);
+                updateUI(priceData);
+                print('check price');
+              },
+            ),
           ),
           Container(
             height: 150.0,
