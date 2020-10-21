@@ -26,7 +26,4 @@ const List<String> cryptoList = [
   'BTC',
   'ETH',
   'LTC',
-  'AVAX',
 ];
-
-class CoinData {}

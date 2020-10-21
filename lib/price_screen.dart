@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:bitcoin_ticker/services/tickerData.dart';
+import 'coin_card.dart';
 import 'coin_data.dart';
 import 'package:flutter/cupertino.dart';
 import 'dart:io' show Platform;
@@ -13,27 +14,50 @@ class PriceScreen extends StatefulWidget {
 }
 
 class _PriceScreenState extends State<PriceScreen> {
-  CryptoModel crypto = CryptoModel();
   String selectedCurrency;
-  String coin;
-  double cryptoValue;
+  double BTCValue;
+  double ETHValue;
+  double LTCValue;
 
   @override
   void initState() {
     super.initState();
-    updateUI(widget.priceValue);
+    updateUI(widget.priceValue, widget.priceValue, widget.priceValue);
   }
 
-  void updateUI(dynamic priceData) {
+  void updateUI(dynamic priceData1, dynamic priceData2, dynamic priceData3) {
     setState(() {
-      if (priceData == null) {
+      if (priceData1 == null || priceData2 == null || priceData3 == null) {
         selectedCurrency = 'USD';
-        coin = 'BTC';
-        cryptoValue = 0;
+        BTCValue = 0;
+        ETHValue = 0;
+        LTCValue = 0;
         return;
       }
-      cryptoValue = priceData['last'];
+      BTCValue = priceData1['last'];
+      ETHValue = priceData2['last'];
+      LTCValue = priceData3['last'];
     });
+  }
+
+  CryptoModel crypto = CryptoModel();
+
+  Future<dynamic> askBTC(String selectedCurrency) async {
+    String pair = 'BTC' + selectedCurrency.toUpperCase();
+    var priceData = await crypto.getPrice(pair);
+    return priceData;
+  }
+
+  Future<dynamic> askETH(String selectedCurrency) async {
+    String pair = 'ETH' + selectedCurrency.toUpperCase();
+    var priceData = await crypto.getPrice(pair);
+    return priceData;
+  }
+
+  Future<dynamic> askLTC(String selectedCurrency) async {
+    String pair = 'LTC' + selectedCurrency.toUpperCase();
+    var priceData = await crypto.getPrice(pair);
+    return priceData;
   }
 
   DropdownButton<String> androidDropdown() {
@@ -90,72 +114,9 @@ class _PriceScreenState extends State<PriceScreen> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          Padding(
-            padding: EdgeInsets.fromLTRB(18.0, 18.0, 18.0, 0),
-            child: Card(
-              color: Colors.greenAccent,
-              elevation: 5.0,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10.0),
-              ),
-              child: Padding(
-                padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 28.0),
-                child: Text(
-                  // BitcoinAverage API - Ticker Data (Per Symbol)
-                  '1 BTC = $cryptoValue $selectedCurrency',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 20.0,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.fromLTRB(18.0, 18.0, 18.0, 0),
-            child: Card(
-              color: Colors.greenAccent,
-              elevation: 5.0,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10.0),
-              ),
-              child: Padding(
-                padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 28.0),
-                child: Text(
-                  // BitcoinAverage API - Ticker Data (Per Symbol)
-                  '1 ETH = $cryptoValue $selectedCurrency',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 20.0,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.fromLTRB(18.0, 18.0, 18.0, 0),
-            child: Card(
-              color: Colors.greenAccent,
-              elevation: 5.0,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10.0),
-              ),
-              child: Padding(
-                padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 28.0),
-                child: Text(
-                  // BitcoinAverage API - Ticker Data (Per Symbol)
-                  '1 LTC = $cryptoValue $selectedCurrency',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 20.0,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-            ),
-          ),
+          coinCard('BTC', BTCValue, selectedCurrency),
+          coinCard('ETH', ETHValue, selectedCurrency),
+          coinCard('LTC', LTCValue, selectedCurrency),
           Container(
             alignment: Alignment.bottomRight,
             padding: EdgeInsets.fromLTRB(0, 18.0, 18.0, 0),
@@ -163,20 +124,20 @@ class _PriceScreenState extends State<PriceScreen> {
               hoverColor: Colors.white,
               focusColor: Colors.white,
               onPressed: () async {
-                String pair = coin + selectedCurrency.toUpperCase();
-                var priceData = await crypto.getPrice(pair);
-                updateUI(priceData);
-                print('check price');
+                var priceData1 = await askBTC(selectedCurrency);
+                var priceData2 = await askETH(selectedCurrency);
+                var priceData3 = await askLTC(selectedCurrency);
+                updateUI(priceData1, priceData2, priceData3);
               },
             ),
-          ),
+          ), //action button
           Container(
             height: 150.0,
             alignment: Alignment.center,
             padding: EdgeInsets.only(bottom: 30.0),
             color: Colors.greenAccent,
             child: Platform.isIOS ? iOSPicker() : androidDropdown(),
-          ),
+          ), //dropdown or picker
         ],
       ),
     );
