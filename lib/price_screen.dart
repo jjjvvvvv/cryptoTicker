@@ -1,15 +1,40 @@
 import 'package:flutter/material.dart';
+import 'package:bitcoin_ticker/services/tickerData.dart';
 import 'coin_data.dart';
 import 'package:flutter/cupertino.dart';
 import 'dart:io' show Platform;
 
 class PriceScreen extends StatefulWidget {
+  PriceScreen({this.priceValue});
+
+  final priceValue;
   @override
   _PriceScreenState createState() => _PriceScreenState();
 }
 
 class _PriceScreenState extends State<PriceScreen> {
-  String selectedCurrency = 'USD';
+  CryptoModel crypto = CryptoModel();
+  String selectedCurrency;
+  String coin;
+  double cryptoValue;
+
+  @override
+  void initState() {
+    super.initState();
+    updateUI(widget.priceValue);
+  }
+
+  void updateUI(dynamic priceData) {
+    setState(() {
+      if (priceData == null) {
+        selectedCurrency = 'USD';
+        coin = 'BTC';
+        cryptoValue = 0;
+        return;
+      }
+      cryptoValue = priceData['last'];
+    });
+  }
 
   DropdownButton<String> androidDropdown() {
     // This method could be very useful for the product list cards
@@ -77,7 +102,7 @@ class _PriceScreenState extends State<PriceScreen> {
                 padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 28.0),
                 child: Text(
                   // BitcoinAverage API - Ticker Data (Per Symbol)
-                  '1 BTC = ? USD',
+                  '1 BTC = $cryptoValue $selectedCurrency',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 20.0,
@@ -86,6 +111,15 @@ class _PriceScreenState extends State<PriceScreen> {
                 ),
               ),
             ),
+          ),
+          FloatingActionButton(
+            foregroundColor: Colors.black,
+            onPressed: () async {
+              String pair = coin + selectedCurrency.toUpperCase();
+              var priceData = await crypto.getPrice();
+              updateUI(priceData);
+              print('check price');
+            },
           ),
           Container(
             height: 150.0,
