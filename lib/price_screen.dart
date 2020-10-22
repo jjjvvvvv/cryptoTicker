@@ -15,9 +15,9 @@ class PriceScreen extends StatefulWidget {
 
 class _PriceScreenState extends State<PriceScreen> {
   String selectedCurrency;
-  double BTCValue;
-  double ETHValue;
-  double LTCValue;
+  double btcValue;
+  double ethValue;
+  double ltcValue;
 
   @override
   void initState() {
@@ -29,14 +29,14 @@ class _PriceScreenState extends State<PriceScreen> {
     setState(() {
       if (priceData1 == null || priceData2 == null || priceData3 == null) {
         selectedCurrency = 'USD';
-        BTCValue = 0;
-        ETHValue = 0;
-        LTCValue = 0;
+        btcValue = 0;
+        ethValue = 0;
+        ltcValue = 0;
         return;
       }
-      BTCValue = priceData1['last'];
-      ETHValue = priceData2['last'];
-      LTCValue = priceData3['last'];
+      btcValue = priceData1['last'];
+      ethValue = priceData2['last'];
+      ltcValue = priceData3['last'];
     });
   }
 
@@ -99,6 +99,7 @@ class _PriceScreenState extends State<PriceScreen> {
       itemExtent: 32.0,
       onSelectedItemChanged: (selectedIndex) {
         print(selectedIndex);
+        selectedCurrency = pickerItems[selectedIndex].toString();
       },
       children: pickerItems,
     );
@@ -114,23 +115,23 @@ class _PriceScreenState extends State<PriceScreen> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          coinCard('BTC', BTCValue, selectedCurrency),
-          coinCard('ETH', ETHValue, selectedCurrency),
-          coinCard('LTC', LTCValue, selectedCurrency),
-          Container(
-            alignment: Alignment.bottomRight,
-            padding: EdgeInsets.fromLTRB(0, 18.0, 18.0, 0),
-            child: FloatingActionButton(
-              hoverColor: Colors.white,
-              focusColor: Colors.white,
-              onPressed: () async {
-                var priceData1 = await askBTC(selectedCurrency);
-                var priceData2 = await askETH(selectedCurrency);
-                var priceData3 = await askLTC(selectedCurrency);
-                updateUI(priceData1, priceData2, priceData3);
-              },
-            ),
-          ), //action button
+          coinCard('BTC', btcValue, selectedCurrency),
+          coinCard('ETH', ethValue, selectedCurrency),
+          coinCard('LTC', ltcValue, selectedCurrency),
+          // Container(
+          //   alignment: Alignment.bottomRight,
+          //   padding: EdgeInsets.fromLTRB(0, 18.0, 18.0, 0),
+          //   child: FloatingActionButton(
+          //     hoverColor: Colors.white,
+          //     focusColor: Colors.white,
+          //     onPressed: () async {
+          //       var priceData1 = await askBTC(selectedCurrency);
+          //       var priceData2 = await askETH(selectedCurrency);
+          //       var priceData3 = await askLTC(selectedCurrency);
+          //       updateUI(priceData1, priceData2, priceData3);
+          //     },
+          //   ),
+          // ), //action button
           Container(
             height: 150.0,
             alignment: Alignment.center,
