@@ -108,6 +108,12 @@ class _PriceScreenState extends State<PriceScreen> {
       onSelectedItemChanged: (selectedIndex) {
         print(selectedIndex);
         selectedCurrency = pickerItems[selectedIndex].toString();
+        setState(() async {
+          var priceData1 = await askBTC(selectedCurrency);
+          var priceData2 = await askETH(selectedCurrency);
+          var priceData3 = await askLTC(selectedCurrency);
+          updateUI(priceData1, priceData2, priceData3);
+        });
       },
       children: pickerItems,
     );
@@ -117,7 +123,8 @@ class _PriceScreenState extends State<PriceScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('🤑 Coin Ticker'),
+        title: Text('🤑 CRYPTO TICKER 🤑'),
+        centerTitle: true,
       ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
