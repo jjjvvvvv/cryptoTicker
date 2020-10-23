@@ -25,6 +25,7 @@ class _PriceScreenState extends State<PriceScreen> {
     updateUI(widget.priceValue, widget.priceValue, widget.priceValue);
   }
 
+  // todo: make app update prices for default USD on start
   void updateUI(dynamic priceData1, dynamic priceData2, dynamic priceData3) {
     setState(() {
       if (priceData1 == null || priceData2 == null || priceData3 == null) {
@@ -42,7 +43,7 @@ class _PriceScreenState extends State<PriceScreen> {
 
   CryptoModel crypto = CryptoModel();
 
-  //At some point I do want to consolidate these methods. The issue I was running into was that when I could only display one getPrice for all of the coins. Not sure how to fix this atm but I would like to return to it at some point.
+  // todo: At some point I do want to consolidate these methods. The issue I was running into was that when I could only display one getPrice for all of the coins. Not sure how to fix this atm but I would like to return to it at some point.
 
   Future<dynamic> askBTC(String selectedCurrency) async {
     String pair = 'BTC' + selectedCurrency.toUpperCase();
@@ -60,6 +61,13 @@ class _PriceScreenState extends State<PriceScreen> {
     String pair = 'LTC' + selectedCurrency.toUpperCase();
     var priceData = await crypto.getPrice(pair);
     return priceData;
+  }
+
+  Future<dynamic> updateAll() async {
+    var priceData1 = await askBTC(selectedCurrency);
+    var priceData2 = await askETH(selectedCurrency);
+    var priceData3 = await askLTC(selectedCurrency);
+    updateUI(priceData1, priceData2, priceData3);
   }
 
   DropdownButton<String> androidDropdown() {
@@ -108,11 +116,8 @@ class _PriceScreenState extends State<PriceScreen> {
       onSelectedItemChanged: (selectedIndex) {
         print(selectedIndex);
         selectedCurrency = pickerItems[selectedIndex].toString();
-        setState(() async {
-          var priceData1 = await askBTC(selectedCurrency);
-          var priceData2 = await askETH(selectedCurrency);
-          var priceData3 = await askLTC(selectedCurrency);
-          updateUI(priceData1, priceData2, priceData3);
+        setState(() {
+          updateAll();
         });
       },
       children: pickerItems,
@@ -136,11 +141,11 @@ class _PriceScreenState extends State<PriceScreen> {
         ],
       ),
       bottomNavigationBar: Container(
-        height: 100.0,
-        alignment: Alignment.bottomCenter,
+        height: 150.0,
+        alignment: Alignment.center,
         padding: EdgeInsets.only(bottom: 30.0),
         color: Colors.greenAccent,
-        child: Platform.isIOS ? iOSPicker() : androidDropdown(),
+        child: iOSPicker(), //Platform.isIOS ? iOSPicker() : androidDropdown(),
       ),
     );
   }
