@@ -42,6 +42,8 @@ class _PriceScreenState extends State<PriceScreen> {
 
   CryptoModel crypto = CryptoModel();
 
+  //At some point I do want to consolidate these methods. The issue I was running into was that when I could only display one getPrice for all of the coins. Not sure how to fix this atm but I would like to return to it at some point.
+
   Future<dynamic> askBTC(String selectedCurrency) async {
     String pair = 'BTC' + selectedCurrency.toUpperCase();
     var priceData = await crypto.getPrice(pair);
@@ -77,9 +79,15 @@ class _PriceScreenState extends State<PriceScreen> {
       value: selectedCurrency,
       items: dropdownItems,
       onChanged: (value) {
-        setState(() {
-          selectedCurrency = value;
-        });
+        setState(
+          () async {
+            selectedCurrency = value;
+            var priceData1 = await askBTC(selectedCurrency);
+            var priceData2 = await askETH(selectedCurrency);
+            var priceData3 = await askLTC(selectedCurrency);
+            updateUI(priceData1, priceData2, priceData3);
+          },
+        );
       },
     );
   }
@@ -112,34 +120,20 @@ class _PriceScreenState extends State<PriceScreen> {
         title: Text('🤑 Coin Ticker'),
       ),
       body: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           coinCard('BTC', btcValue, selectedCurrency),
           coinCard('ETH', ethValue, selectedCurrency),
           coinCard('LTC', ltcValue, selectedCurrency),
-          // Container(
-          //   alignment: Alignment.bottomRight,
-          //   padding: EdgeInsets.fromLTRB(0, 18.0, 18.0, 0),
-          //   child: FloatingActionButton(
-          //     hoverColor: Colors.white,
-          //     focusColor: Colors.white,
-          //     onPressed: () async {
-          //       var priceData1 = await askBTC(selectedCurrency);
-          //       var priceData2 = await askETH(selectedCurrency);
-          //       var priceData3 = await askLTC(selectedCurrency);
-          //       updateUI(priceData1, priceData2, priceData3);
-          //     },
-          //   ),
-          // ), //action button
-          Container(
-            height: 150.0,
-            alignment: Alignment.center,
-            padding: EdgeInsets.only(bottom: 30.0),
-            color: Colors.greenAccent,
-            child: Platform.isIOS ? iOSPicker() : androidDropdown(),
-          ), //dropdown or picker
         ],
+      ),
+      bottomNavigationBar: Container(
+        height: 100.0,
+        alignment: Alignment.bottomCenter,
+        padding: EdgeInsets.only(bottom: 30.0),
+        color: Colors.greenAccent,
+        child: Platform.isIOS ? iOSPicker() : androidDropdown(),
       ),
     );
   }
