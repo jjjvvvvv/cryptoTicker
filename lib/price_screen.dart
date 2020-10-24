@@ -114,9 +114,8 @@ class _PriceScreenState extends State<PriceScreen> {
     return CupertinoPicker(
       itemExtent: 32.0,
       onSelectedItemChanged: (selectedIndex) {
-        print(selectedIndex);
-        selectedCurrency = pickerItems[selectedIndex].toString();
         setState(() {
+          selectedCurrency = currenciesList[selectedIndex].toString();
           updateAll();
         });
       },
@@ -145,7 +144,7 @@ class _PriceScreenState extends State<PriceScreen> {
         alignment: Alignment.center,
         padding: EdgeInsets.only(bottom: 30.0),
         color: Colors.greenAccent,
-        child: iOSPicker(), //Platform.isIOS ? iOSPicker() : androidDropdown(),
+        child: Platform.isIOS ? iOSPicker() : androidDropdown(),
       ),
     );
   }
